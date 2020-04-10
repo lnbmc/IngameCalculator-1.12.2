@@ -1,0 +1,10 @@
+{
+  "uuid": "%uuid%",
+  "name": "IngameCalculator",
+  "mainClass": "de.jerosal.calculator.CalculatorAddon",
+  "description": "Addon to solve math problems ingame and without external programs.",
+  "version": 1,
+  "author": "LateNightBerlin",
+  "category": 2,
+  "icon": "https://i.imgur.com/WDgrafB.png"
+}
