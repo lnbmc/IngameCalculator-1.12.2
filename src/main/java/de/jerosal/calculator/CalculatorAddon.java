@@ -1,7 +1,8 @@
 package de.jerosal.calculator;
 
 import net.labymod.api.LabyModAddon;
-import net.labymod.settings.elements.SettingsElement;
+import net.labymod.settings.elements.*;
+import net.labymod.utils.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextComponentString;
 
@@ -18,6 +19,7 @@ public class CalculatorAddon extends LabyModAddon {
     private ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
     private ScriptEngine engine = scriptEngineManager.getEngineByName("JavaScript");
     private ExecutorService executorService = Executors.newFixedThreadPool(2);
+    private String commandName;
 
     @Override
     public void onEnable() {
@@ -25,7 +27,7 @@ public class CalculatorAddon extends LabyModAddon {
     }
 
     private boolean handleMessage(String message) {
-        if (message.startsWith(".calc")) {
+        if (message.startsWith(commandName)) {
             executorService.submit(() -> {
                 String[] splitMessage = message.split(" ");
                 try {
@@ -40,13 +42,24 @@ public class CalculatorAddon extends LabyModAddon {
         return false;
     }
 
+    private void loadCommandPrefix() {
+        if(!getConfig().has("command_name")) {
+            getConfig().addProperty("command_name", "/calc");
+        }
+        commandName = getConfig().get("command_name").getAsString();
+    }
+
     private String calculate(String input) throws ScriptException {
         return String.format("§aResult: §e%,.2f", Double.parseDouble(String.valueOf(engine.eval(input))));
     }
 
     @Override
-    public void loadConfig() {}
+    public void loadConfig() {
+        loadCommandPrefix();
+    }
 
     @Override
-    protected void fillSettings(List<SettingsElement> list) {}
+    protected void fillSettings(List<SettingsElement> list) {
+        list.add(new StringElement("Command", this, new ControlElement.IconData(Material.DIODE), "command_name", commandName));
+    }
 }
